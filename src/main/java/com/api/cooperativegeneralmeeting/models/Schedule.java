@@ -27,10 +27,11 @@ public class Schedule {
     private String title;
     @Column(nullable = false)
     private String description;
+    private SessionStatus sessionStatus;
     @Column(nullable = false)
     private LocalDateTime registrationDate;
-    private SessionStatus sessionStatus;
-    private int resultVote;
+    private Integer timeLimit;
+    private Integer resultVote;
     private ApprovedOrNotApproved approvedOrNotApproved;
 
 }

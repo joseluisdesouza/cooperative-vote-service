@@ -14,4 +14,5 @@ public class ScheduleDto {
     @NotBlank
     private String description;
     private Set<Vote> votes;
+    private Integer timeLimit;
 }

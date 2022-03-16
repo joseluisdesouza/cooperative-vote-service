@@ -55,9 +55,6 @@ public class ScheduleResource {
 
         logger.info("Call to create schedule");
 
-        if (scheduleService.existsByTitle(scheduleDto.getTitle())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This schedule with this name already exists");
-        }
         var scheduleModel = new Schedule();
         BeanUtils.copyProperties(scheduleDto, scheduleModel);
         scheduleModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
@@ -85,15 +82,11 @@ public class ScheduleResource {
                     description = "Resource successfully retrieved",
                     content = @Content(schema = @Schema(implementation = ScheduleDto.class)))})
     public ResponseEntity<Object> getByScheduleId(@PathVariable Long id) {
-        Optional<Schedule> scheduleServiceById = scheduleService.findById(id);
-        if (!scheduleServiceById.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Schedule not found");
-        }
-        var response = scheduleServiceById.get();
+        Schedule scheduleServiceById = scheduleService.findById(id);
 
         logger.info("Returning schedule by id {}.", id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleServiceById);
     }
 
     @DeleteMapping("/{id}")
@@ -102,11 +95,7 @@ public class ScheduleResource {
                     content = @Content(schema = @Schema(implementation = ScheduleDto.class)))})
     public ResponseEntity<Object> deleteSchedule(@PathVariable Long id) {
 
-        Optional<Schedule> scheduleServiceById = scheduleService.findById(id);
-        if (!scheduleServiceById.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Schedule not found");
-        }
-        scheduleService.delete(scheduleServiceById.get());
+        scheduleService.delete(id);
 
         logger.info("Schedule deleted");
 
@@ -122,10 +111,6 @@ public class ScheduleResource {
         logger.info("Opening session...");
 
         getAllSchedule(pageable);
-        Optional<Schedule> scheduleServiceById = scheduleService.findById(idSchedule);
-        if (!scheduleServiceById.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Schedule not found");
-        }
 
         var scheduleSessionModel = new ScheduleSession();
         BeanUtils.copyProperties(scheduleSessionDto, scheduleSessionModel);
@@ -147,10 +132,6 @@ public class ScheduleResource {
     public ResponseEntity<Object> vote(@PathVariable Long idSchedule, @RequestBody VoteDto voteDto) {
         if (scheduleService.existsByCpf(voteDto.getCpf())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("This member has already voted");
-        }
-        Optional<Schedule> scheduleServiceById = scheduleService.findById(idSchedule);
-        if (!scheduleServiceById.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Schedule not found");
         }
 
         var voteModel = new Vote();

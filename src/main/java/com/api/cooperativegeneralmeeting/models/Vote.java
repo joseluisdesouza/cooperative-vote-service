@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Set;
 
@@ -27,6 +28,7 @@ public class Vote {
     @Column(length = 11)
     private String cpf;
 
-    private Schedule schedule;
+//    @OneToMany
+//    private Schedule schedule;
 
 }
