@@ -17,7 +17,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "tb_schedule")
-public class Schedule {
+public class Topic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,11 +27,13 @@ public class Schedule {
     private String title;
     @Column(nullable = false)
     private String description;
-    private SessionStatus sessionStatus;
+
     @Column(nullable = false)
     private LocalDateTime registrationDate;
+    private SessionStatus sessionStatus;
     private Integer timeLimit;
     private Integer resultVote;
-    private ApprovedOrNotApproved approvedOrNotApproved;
+    private Boolean approved;
+    private LocalDateTime endSession;
 
 }

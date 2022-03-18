@@ -1,12 +1,7 @@
 package com.api.cooperativegeneralmeeting.resources;
 
 import com.api.cooperativegeneralmeeting.dtos.ScheduleDto;
-import com.api.cooperativegeneralmeeting.dtos.ScheduleSessionDto;
-import com.api.cooperativegeneralmeeting.dtos.VoteDto;
-import com.api.cooperativegeneralmeeting.enums.SessionStatus;
 import com.api.cooperativegeneralmeeting.models.Schedule;
-import com.api.cooperativegeneralmeeting.models.ScheduleSession;
-import com.api.cooperativegeneralmeeting.models.Vote;
 import com.api.cooperativegeneralmeeting.services.ScheduleService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -100,46 +94,5 @@ public class ScheduleResource {
         logger.info("Schedule deleted");
 
         return ResponseEntity.status(HttpStatus.OK).body("Schedule deleted with successfully");
-    }
-
-    @PostMapping("/{idSchedule}/session")
-    @Operation(summary = "Open session in schedule",
-            responses = {@ApiResponse(responseCode = "201",
-                    content = @Content(schema = @Schema(implementation = ScheduleSessionDto.class)))})
-    public ResponseEntity<Object> openingSession(@PathVariable Long idSchedule, @RequestBody ScheduleSessionDto scheduleSessionDto, Pageable pageable) {
-
-        logger.info("Opening session...");
-
-        getAllSchedule(pageable);
-
-        var scheduleSessionModel = new ScheduleSession();
-        BeanUtils.copyProperties(scheduleSessionDto, scheduleSessionModel);
-        scheduleSessionModel.setRegistrationDateOpeningSession(LocalDateTime.now(ZoneId.of("UTC")));
-
-        scheduleSessionModel.setSessionStatus(SessionStatus.OPEN);
-
-        ResponseEntity<Object> objectResponseEntity = ResponseEntity.status(HttpStatus.CREATED)
-                .body(scheduleService.saveSession(scheduleSessionModel));
-
-        logger.info("Session created");
-        return objectResponseEntity;
-    }
-
-    @PostMapping("/{idSchedule}/vote")
-    @Operation(summary = "Vote in schedule",
-            responses = {@ApiResponse(responseCode = "201",
-                    content = @Content(schema = @Schema(implementation = VoteDto.class)))})
-    public ResponseEntity<Object> vote(@PathVariable Long idSchedule, @RequestBody VoteDto voteDto) {
-        if (scheduleService.existsByCpf(voteDto.getCpf())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This member has already voted");
-        }
-
-        var voteModel = new Vote();
-        BeanUtils.copyProperties(voteDto, voteModel);
-
-        ResponseEntity<Object> responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.saveVote(voteModel));
-        
-        return responseEntity;
-
     }
 }

@@ -13,6 +13,7 @@ public class ScheduleDto {
     private String title;
     @NotBlank
     private String description;
+
     private Set<Vote> votes;
     private Integer timeLimit;
 }
